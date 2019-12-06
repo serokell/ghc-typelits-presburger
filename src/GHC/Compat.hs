@@ -26,9 +26,9 @@ import TcRnTypes           as GHC.Compat (TcPlugin (..), ctEvPred, ctEvidence)
 import TcType              as GHC.Compat (tcTyFamInsts)
 import TcTypeNats          as GHC.Compat
 import TyCon               as GHC.Compat
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 800
 import           GhcPlugins (InScopeSet, Outputable, emptyUFM)
 import qualified PrelNames  as Old
+import qualified TysWiredIn as Old (eqTyCon, eqTyConName)
 import           TyCoRep    as GHC.Compat (TyLit (NumTyLit), Type (..))
 import           Type       as GHC.Compat (TCvSubst (..), TvSubstEnv,
                                            emptyTCvSubst)
@@ -36,21 +36,12 @@ import           Type       as GHC.Compat (eqType, unionTCvSubst)
 import qualified Type       as Old
 import           TysWiredIn as GHC.Compat (boolTyCon)
 import           Unify      as Old (tcUnifyTy)
-#else
-import Type       as GHC.Compat (TvSubst, emptyTvSubst)
-import Type       as GHC.Compat (substTy, unionTvSubst)
-import TypeRep    as GHC.Compat (TyLit (NumTyLit), Type (..))
-import TysWiredIn as Old (eqTyCon)
-import TysWiredIn as GHC.Compat (promotedBoolTyCon)
-import Unify      as GHC.Compat (tcUnifyTy)
-#endif
 import Data.Generics.Twins
 import TcPluginM           (lookupOrig)
 import TyCoRep             ()
 import Type                as GHC.Compat (splitTyConApp_maybe)
 import Unique              as GHC.Compat (getKey, getUnique)
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 800
 data TvSubst = TvSubst InScopeSet TvSubstEnv
 
 instance Outputable  TvSubst where
@@ -80,28 +71,11 @@ viewFunTy t@(TyConApp _ [t1, t2])
   | Old.isFunTy t = Just (t1, t2)
 viewFunTy _ = Nothing
 
-#if defined(__GLASGOW_HASKELL__) && __GLASGOW_HASKELL__ >= 802
-#else
-pattern FunTy :: Type -> Type -> Type
-pattern FunTy t1 t2 <- (viewFunTy -> Just (t1, t2)) where
-  FunTy t1 t2 = Old.mkFunTy t1 t2
-#endif
-
 tcUnifyTy :: Type -> Type -> Maybe TvSubst
 tcUnifyTy t1 t2 = fromTCv <$> Old.tcUnifyTy t1 t2
 
 getEqTyCon :: TcPluginM TyCon
 getEqTyCon = tcLookupTyCon Old.eqTyConName
-
-#else
-eqType :: Type -> Type -> Bool
-eqType = (==)
-
-getEqTyCon :: TcPluginM TyCon
-getEqTyCon = return Old.eqTyCon
-
-#endif
-
 
 getEqWitnessTyCon :: TcPluginM TyCon
 getEqWitnessTyCon = do

@@ -1,0 +1,10 @@
+resolver: nightly-2019-11-29
+skip-ghc-check: true
+
+flags: {}
+packages:
+- '.'
+
+extra-deps: 
+- git: https://github.com/serokell/equational-reasoning-in-haskell.git
+  commit: 16ab0718dd99354eaca14a5a14640e7c4ac67a05

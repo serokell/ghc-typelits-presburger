@@ -1,3 +1,3 @@
 [submodule "presburger"]
 	path = presburger
-	url = https://github.com/konn/presburger
+	url = https://github.com/serokell/presburger
