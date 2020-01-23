@@ -8,3 +8,5 @@ packages:
 extra-deps: 
 - git: https://github.com/serokell/equational-reasoning-in-haskell.git
   commit: 16ab0718dd99354eaca14a5a14640e7c4ac67a05
+- git: https://github.com/serokell/presburger
+  commit: d32f57edcb04e9fee5e971100976b3d669f5669f
